@@ -1,0 +1,45 @@
+@media screen and (min-width: 320px) and (max-width: 980px) and (orientation: landscape) {
+    html {
+        transform: rotate(-90deg);
+        transform-origin: left top;
+        width: 100vh;
+        overflow-x: hidden;
+        position: absolute;
+        top: 100%;
+        left: 0;
+    }
+}
+
+/** postcss-bem-linter: define main-component; weak */
+$color: #555;
+
+.main-component {
+    &__title {
+        color: $color;
+    }
+}
+
+/** postcss-bem-linter: define utilities */
+.u-ellipsis {
+    color: $color;
+}
+
+/* postcss-bem-linter: ignore */
+.stage {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border: 5px solid #ccc;
+    border-radius: 10px;
+}
+
+/* postcss-bem-linter: ignore */
+.container {
+    position: absolute;
+    top: 90px;
+    left: 90px;
+    width: 20px;
+    height: 20px;
+    background: green;
+    border-radius: 100%;
+}
