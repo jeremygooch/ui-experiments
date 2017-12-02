@@ -2,18 +2,30 @@
 
 require('./main.scss');
 
-class maintainPerspective {
-    constructor({container, stage, dropshadow} = {}) {
-        this.container  = document.querySelector(container);
-        this.stage      = document.querySelector(stage);
-        this.dropshadow = document.querySelector(dropshadow) || this.createDiv(dropshadow);
-    }
+class LayoutHelper {
+    static calcPercent(per, num) { return num * (per / 100); }
 
-    createDiv(className) {
+    static createDiv(className) {
         const d = document.createElement("div");
         d.classList.add(className.replace(/\./, ''));
-        this.stage.appendChild(d);
         return d;
+    }
+}
+
+class FollowDeviceRotation extends LayoutHelper {
+    constructor({container, stage, dropshadow} = {}) {
+        super();
+
+        var createShadow = (x) => {
+            this.stage.appendChild(x);
+            return x;
+        };
+
+        this.container  = document.querySelector(container);
+        this.stage      = document.querySelector(stage);
+        this.dropshadow = document.querySelector(dropshadow);
+
+        if (!this.dropshadow) this.dropshadow = createShadow(LayoutHelper.createDiv(dropshadow));
     }
 
     getOptions() {
@@ -24,20 +36,19 @@ class maintainPerspective {
         };
     }
 
-    calcPercent(per, num) { return num * (per / 100); }
     calcDropshadowDrift(area, gamma, perDrift, containerWidth) {
-        return area*gamma/177 + (area*perDrift/177 > 0 ? area*perDrift/177 : area*perDrift/177 * -1) - (containerWidth/2)
+        // return area*gamma/177 + (area*perDrift/177 > 0 ? area*perDrift/177 : area*perDrift/177 * -1) - (containerWidth/2);
     }
 
-    modifyOrientation(event) {
+    update(event) {
         let options = this.getOptions();
         let x = event.beta - 61;  // In degree in the range [-180,180]
         let y = event.gamma; // In degree in the range [-90,90]
         let dx = 0;
         let dy = 0;
 
-        console.log("beta : " + x + "\n");
-        console.log("gamma: " + y + "\n");
+        // console.log("beta : " + x + "\n");
+        // console.log("gamma: " + y + "\n");
 
         // Because we don't want to have the device upside down
         // We constrain the x value to the range [-90,90]
@@ -48,24 +59,28 @@ class maintainPerspective {
         // x and y to [0,180]
         x += 90;
         y += 90;
-        dx = this.calcPercent(5, x);
-        dy = this.calcPercent(5, y);
+        dx = LayoutHelper.calcPercent(5, x);
+        dy = LayoutHelper.calcPercent(5, y);
+
+        console.log(dx);
 
         // 10 is half the size of the container
         // It center the positioning point to the center of the container
         this.container.style.top  = (options.maxX*x/180 - (options.containerWidth/2)) + "px";
         this.container.style.left = (options.maxY*y/180 - (options.containerWidth/2)) + "px";
 
-        this.dropshadow.style.top  = (options.maxX*x/175 + options.maxX*dx/175 - (options.containerWidth/2)) + "px";
-        
-        this.dropshadow.style.left = (options.maxY*y/177 + (options.maxY*dy/177 > 0 ? options.maxY*dy/177 : options.maxY*dy/177 * -1) - (options.containerWidth/2)) + "px";
-        // this.dropshadow.style.left = this.calcDropshadowDrift(options.maxY, y, options.containerWidth) + "px";
+        this.dropshadow.style.top  = (options.maxX*x/177 + options.maxX*dx/177 - (options.containerWidth/2)) + "px";
 
+        this.dropshadow.style.left = (options.maxY*y/177 + (options.maxY*dy/177 > 0 ? options.maxY*dy/177 : options.maxY*dy/177 * -1) - (options.containerWidth/2)) + "px";
+
+
+        
         // Special Effects
-        // this.dropshadow.style.filter = 'blur('++'px)';
+        this.dropshadow.style.filter = 'blur(' + (2 + ((dx + dy) / 2)) + 'px)';
+        this.dropshadow.style.opacity = 0.75 / ((dx + dy) / 2);
     }
 }
 
 // var p = new maintainPerspective(['.container', '.stage']);
-var f = new maintainPerspective({container: '.container', stage: '.stage', dropshadow: '.dropshadow'});
-window.addEventListener('deviceorientation', () => f.modifyOrientation(event));
+var f = new FollowDeviceRotation({container: '.container', stage: '.stage', dropshadow: '.dropshadow'});
+window.addEventListener('deviceorientation', () => f.update(event));
