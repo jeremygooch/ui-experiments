@@ -10,7 +10,6 @@
     }
 }
 
-/** postcss-bem-linter: define main-component; weak */
 $color: #555;
 
 .main-component {
@@ -19,45 +18,36 @@ $color: #555;
     }
 }
 
-/** postcss-bem-linter: define utilities */
 .u-ellipsis {
     color: $color;
 }
 
-/* postcss-bem-linter: ignore */
 .stage {
     position: relative;
-    width: 80%;
-    height: 750px;
-    border: 5px solid #ccc;
-    border-radius: 10px;
+    width: 100vw;
+    height: 100vh;
     margin: 1rem auto;
 }
 
-/* postcss-bem-linter: ignore */
-.container {
+.container,
+.dropshadow {
     position: absolute;
     z-index: 1;
-    top: 90px;
-    left: 90px;
-    width: 20px;
-    height: 20px;
-    background: green;
-    border-radius: 100%;
+    width: 250px;
+    height: 400px;
+    border: 1px solid red;
+    background: #fff;
 }
 
-/** postcss-bem-linter: define dropshadow */
 .dropshadow {
     background: rgb(0, 0, 0);
     z-index: 0;
     filter: blur(2px);
     opacity: 0.75;
-    position: absolute;
-    margin-top: 5px;
-    margin-right: 5px;
-    top: 90px;
-    left: 90px;
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
+
+    /* top: 90px;
+       left: 90px;
+       width: 400px;
+       height: 500px;
+       border-radius: 100%; */
 }
